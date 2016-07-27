@@ -7,15 +7,6 @@
 # the Bing pic of the day
 bing="www.bing.com"
 
-# The mkt parameter determines which Bing market you would like to
-# obtain your images from.
-# Valid values are: en-US, zh-CN, ja-JP, en-AU, en-UK, de-DE, en-NZ, en-CA.
-mkt="zh-CN"
-
-# The idx parameter determines where to start from. 0 is the current day,
-# 1 the previous day, etc.
-idx="0"
-
 # $saveDir is used to set the location where Bing pics of the day
 # are stored.  $HOME holds the path of the current user's home directory
 saveDir=$HOME'/Pictures/bing/'
@@ -28,6 +19,15 @@ picExt=".jpg"
 
 # Download the highest resolution
 #while true; do
+
+# The mkt parameter determines which Bing market you would like to
+# obtain your images from.
+# Valid values are: en-US, zh-CN, ja-JP, en-AU, en-UK, de-DE, en-NZ, en-CA.
+mkt="zh-CN"
+
+# The idx parameter determines where to start from. 0 is the current day,
+# 1 the previous day, etc.
+idx="0"
 
    for picRes in _1920x1200 _1366x768 _1280x720 _1024x768 
     do
