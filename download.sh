@@ -31,18 +31,25 @@ do
   for idx in 0 .. 20 
   do
 
+    # $xmlURL is needed to get the xml data from which
+    # the relative URL for the Bing pic of the day is extracted
+    xmlURL="http://www.bing.com/HPImageArchive.aspx?format=xml&idx=$idx&n=1&mkt=$mkt"
+
+    # Extract the relative URL of the Bing pic of the day from
+    # the XML data retrieved from xmlURL, form the fully qualified
+    # URL for the pic of the day, and store it in $picURL
+    picURIPrefix=$(echo $(curl -s $xmlURL) | grep -oP "<urlBase>(.*)</urlBase>" | cut -d ">" -f 2 | cut -d "<" -f 1)
+    echo "picURIPrefix: " $picURIPrefix
+    if [ "${picURIPrefix}" = "" ]; then
+      break
+    fi
+
     for picRes in _1920x1200 _1366x768 _1280x720 _1024x768 
     do
 
-      # $xmlURL is needed to get the xml data from which
-      # the relative URL for the Bing pic of the day is extracted
-      xmlURL="http://www.bing.com/HPImageArchive.aspx?format=xml&idx=$idx&n=1&mkt=$mkt"
-
-      # Extract the relative URL of the Bing pic of the day from
-      # the XML data retrieved from xmlURL, form the fully qualified
-      # URL for the pic of the day, and store it in $picURL
-      picURI=$(echo $(curl -s $xmlURL) | grep -oP "<urlBase>(.*)</urlBase>" | cut -d ">" -f 2 | cut -d "<" -f 1)$picRes$picExt
+      picURI=$picURIPrefix$picRes$picExt
       picURL=$bing$picURI
+      echo $picURL
       picName=$(echo $picURI | cut -d "/" -f 5)
 
       # $picName contains the filename of the Bing pic of the day
