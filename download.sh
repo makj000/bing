@@ -35,21 +35,23 @@ do
   # obtain your images from.
   # Valid values are: en-US, zh-CN, ja-JP, en-AU, en-UK, de-DE, en-NZ, en-CA.
   # download all locales
+  #for mkt in en-US 
   for mkt in en-US zh-CN ja-JP en-AU en-UK de-DE en-NZ en-CA
   # testing one locale
   #for mkt in en-US 
   do
 
-    echo -n "dayAgo:" $dayAgo "   mkt:" $mkt
+    echo "dayAgo:" $dayAgo "   mkt:" $mkt
 
     # $xmlURL is needed to get the xml data from which the relative URL for the Bing pic of the day is extracted
     xmlURL="http://www.bing.com/HPImageArchive.aspx?format=xml&idx=$dayAgo&n=1&mkt=$mkt"
+    echo "xmlURL:" $xmlURL
 
     # Extract the relative URL of the Bing pic of the day from the XML data retrieved from xmlURL, form the fully qualified
     # URL for the pic of the day, and store it in $picURL
     #picURIPrefix=$(echo $(curl -s $xmlURL) | grep -oP "<urlBase>(.*)</urlBase>" | cut -d ">" -f 2 | cut -d "<" -f 1)
-    picURIPrefix=$(echo $(curl -s $xmlURL) | grep -oP "<url>(.*)</url>" | cut -d ">" -f 2 | cut -d "<" -f 1)
-    #echo "picURIPrefix: " $picURIPrefix
+    picURIPrefix=$(echo $(curl -s "$xmlURL") | grep -ioE "<url>(.*)</url>" | cut -d ">" -f 2 | cut -d "<" -f 1)
+    echo "picURIPrefix: " $picURIPrefix
     # stop if the uri is invalid somehow
     if [ "${picURIPrefix}" = "" ]; then
       continue
@@ -70,8 +72,9 @@ do
       # $picName contains the filename of the Bing pic of the day
       #picName=${picURL#*2f}
 
-      # filePcheck for dup
+      # filePath - check if the image to download already exists in the save folder or the archive folder
       saveFilePath=$saveDir/$picName
+      echo saveFile: $saveFilePath
       archiveFilePath=$archiveDir/$picName
       if [ -f $saveFilePath -o -f $archiveFilePath ]; then 
         echo -n " file exists already !!"
@@ -79,10 +82,16 @@ do
       fi
       # Download the Bing pic of the day
       #curl --create-dirs -o $saveFilePath $picURL
-      curl -s -o $saveDir/$picName $picURL
+      curl -s -o $saveFilePath $picURL
 
       # Test if it's a pic
-      file $saveDir/$picName | grep HTML && rm -rf $saveDir/$picName && continue
+      file $saveFilePath | grep HTML && rm -rf $saveFilePath && continue
+
+      # watermark with imagemagick, with file name
+      convert $saveFilePath -font Arial -pointsize 20 -draw "gravity south \
+                 fill black  text -501,2 '$picName' \
+                 fill white  text -500,1 '$picName' \
+" $saveFilePath
 
       #break
     #done
