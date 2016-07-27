@@ -38,16 +38,18 @@ do
     # Extract the relative URL of the Bing pic of the day from
     # the XML data retrieved from xmlURL, form the fully qualified
     # URL for the pic of the day, and store it in $picURL
-    picURIPrefix=$(echo $(curl -s $xmlURL) | grep -oP "<urlBase>(.*)</urlBase>" | cut -d ">" -f 2 | cut -d "<" -f 1)
+    #picURIPrefix=$(echo $(curl -s $xmlURL) | grep -oP "<urlBase>(.*)</urlBase>" | cut -d ">" -f 2 | cut -d "<" -f 1)
+    picURIPrefix=$(echo $(curl -s $xmlURL) | grep -oP "<url>(.*)</url>" | cut -d ">" -f 2 | cut -d "<" -f 1)
     echo "picURIPrefix: " $picURIPrefix
     if [ "${picURIPrefix}" = "" ]; then
       break
     fi
 
-    for picRes in _1920x1200 _1366x768 _1280x720 _1024x768 
-    do
+    #for picRes in _1920x1200 _1366x768 _1280x720 _1024x768 
+    #do
 
-      picURI=$picURIPrefix$picRes$picExt
+      #picURI=$picURIPrefix$picRes$picExt
+      picURI=$picURIPrefix
       picURL=$bing$picURI
       echo $picURL
       picName=$(echo $picURI | cut -d "/" -f 5)
@@ -62,7 +64,7 @@ do
       file $saveDir$picName | grep HTML && rm -rf $saveDir$picName && continue
 
       break
-    done
+    #done
   done
 done
 
