@@ -1,7 +1,7 @@
 #!/bin/sh
 #modified from https://raw.github.com/marguerite/linux-bing-wallpaper/master/bing_wallpaper.sh
 # Description: Download Bing Wallpaper of the Day to the same folder
-# sample xml url: http://www.bing.com/HPImageArchive.aspx?format=xml&dayAgo=$dayAgo&n=1&mkt=$mkt
+# sample xml url: http://www.bing.com/HPImageArchive.aspx?format=xml&dayAgo=1&n=1&mkt=en-US
 # Usage: add the following line in crontab -e
 #   40 */5 * * * ~/bin/download_bing_wallpaper.sh
 
@@ -63,7 +63,7 @@ do
       picURI=$picURIPrefix
       picURL=$bing$picURI
       #echo $picURL
-      # exclude resolution and locale from the name, since the same picture will show up for different locales 
+      # exclude resolution and locale from the final local file name to use, since the same picture will show up for different locales and we don't want to end up with multiple files for the same image
       picName=$(echo $picURI | cut -d "/" -f 5 | cut -d "_" -f 1).jpg
       echo -n " " $picName
 
