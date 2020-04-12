@@ -34,4 +34,4 @@ if [ $numToArchive -gt 0 ]; then
   done
 fi
 
-notify-send "archiving bill wallpapers done :)"
+notify-send "archiving wallpapers done :)"
