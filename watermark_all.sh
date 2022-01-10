@@ -6,7 +6,7 @@ yellow='\e[1;33m%s\e[0m\n'
 
 # $saveDir is used to set the location where Bing pics of the day
 # are stored.  $HOME holds the path of the current user's home directory
-saveDir=$HOME'/baidu/bing/archive'
+saveDir=$HOME'/baidu/bing'
 
 # The file extension for the Bing pic
 picExt=".jpg"
@@ -23,7 +23,7 @@ for saveFilePath in $saveDir/*$picExt; do
   printf " picName:" 
   printf $picName
 
-  ./watermark.sh $saveFilePath
+  ./watermark.sh $saveFilePath force
 done
 
 # Exit the script

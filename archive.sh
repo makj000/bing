@@ -2,7 +2,7 @@
 #modified from https://raw.github.com/marguerite/linux-bing-wallpaper/master/bing_wallpaper.sh
 # Description: Remove old Bing Wallpaper of the Day to the same folder
 # Usage: add the following line in crontab -e
-#   20 10 */15 * * ~/bin/archive_archive_wallpaper.sh
+#   20 10 */15 * * ~/<path>/archive.sh
 
 # how many days to keep the pictures for 
 numToKeep=30
@@ -12,7 +12,7 @@ numToKeep=30
 saveDir=$HOME'/Pictures/bing'
 
 # subfolder for picture archive
-archiveDir=$saveDir'/archive'
+archiveDir=$saveDir'/000_archive'
 mkdir -p $archiveDir
 
 # Archive pictures

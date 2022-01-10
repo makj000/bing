@@ -1,7 +1,9 @@
 #!/bin/sh
 # Description: add a watermark of the file name to the downloaded wallpaper
-# usage: ./watermark.sh <file_path> <date_of_file>
+printf "usage: ./watermark.sh <file_path> <date_of_file> "
 
+  printf " === 1: $1"
+  printf " === 2: $2"
 green='\e[1;32m%s\e[0m\n'
 yellow='\e[1;33m%s\e[0m\n'
 
@@ -23,22 +25,25 @@ pointSize=20
 #for saveFilePath in $saveDir/*$picExt; do
 
 saveFilePath=$1
-picName=$(basename $saveFilePath $picExt)
-if [[ $picName != "watermarked."* ]] ; then
-  
-  echo
-  printf " === " 
-  printf " saveFilePath:"
-  printf $saveFilePath
-  printf " picName:" 
-  printf $picName
+fileName=$(basename $saveFilePath $picExt)
+  printf " === fileName: $fileName, "
+
+# get the date from the file name
+date1=$(echo $fileName | sed 's/^\(.*\)\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)\(.*\)$/\2/')
+printf "DATE: $date1, "
+
+if [[ $2 == "force" || $fileName != "watermarked."* ]] ; then
+ 
+  printf " === fileName: $fileName, "
+  picName=$(echo $fileName | sed 's/^\(watermarked\.\)\(.*\)$/\2/' | sed 's/^\(.*\)\.\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)\(.*\)$/\1/')
+  printf " === saveFilePath: $saveFilePath, picName: $picName, "
 
   # watermark with imagemagick, with file name, install by running "brew install imagemagick"
   # top-left
-  convert $saveFilePath -font Arial -pointsize $pointSize -draw "gravity north \
-                 fill black text -$((x+shadeSize)),1 '$picName' \
-                 fill white text -$x,$((1+shadeSize)) '$picName' \
-          " $saveFilePath
+  # convert $saveFilePath -font Arial -pointsize $pointSize -draw "gravity north \
+      #           fill black text -$((x+shadeSize)),1 '$picName' \
+      #           fill white text -$x,$((1+shadeSize)) '$picName' \
+      #    " $saveFilePath
   # top-right
   #convert $saveFilePath -font Arial -pointsize $pointSize -draw "gravity north \
       #           fill black text $((x+shadeSize)),1 '$picName' \
@@ -50,24 +55,23 @@ if [[ $picName != "watermarked."* ]] ; then
       #           fill white text -$x,$((1+shadeSize)) '$picName' \
       #    " $saveFilePath
   # bottom-right
-  convert $saveFilePath -font Arial -pointsize $pointSize -draw "gravity south \
+  #convert $saveFilePath -font Arial -pointsize $pointSize -draw "gravity south \
       #           fill black text $((x+shadeSize)),1 '$picName' \
       #           fill white text $x,$((1+shadeSize)) '$picName' \
       #    " $saveFilePath
 
   # date
-  if [ ! -z "$2" ] ; then
-  printf " exists $2 "
-  convert $saveFilePath -font Arial -pointsize $pointSize -draw "gravity south \
-                 fill black text -$((x+shadeSize)),1 "$2" \
-                 fill white text -$x,$((1+shadeSize)) "$2" \
+  convert $saveFilePath -font Arial -pointsize $pointSize -background '#0008' -draw "gravity south \
+                 fill black text -$((x+shadeSize)),1 '$picName $date1' \
+                 fill white text -$x,$((1+shadeSize)) '$picName $date1' \
           " $saveFilePath
-  fi
 
   # rename the file
-  mv $saveFilePath $saveDir/"watermarked."$picName$picExt
+  if [[ $fileName != "watermarked."* ]] ; then
+    mv $saveFilePath $saveDir/"watermarked."$fileName$picExt
+  fi
 
-  printf "$green" " <<<<< watermarked" 
+  printf "$green" " watermarked" 
 
 fi
 

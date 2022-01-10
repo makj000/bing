@@ -19,7 +19,7 @@ bing="www.bing.com"
 # are stored.  $HOME holds the path of the current user's home directory
 saveDir=$HOME'/baidu/bing'
 # subfolder for picture archive
-archiveDir=$saveDir'/archive'
+archiveDir=$saveDir'/000_archive'
 
 # Create saveDir if it does not already exist
 mkdir -p $saveDir
@@ -44,7 +44,7 @@ do
   #for mkt in en-US 
   do
     echo
-    printf " === " 
+    printf "$green" " >>>>>>>> "
     printf " dayAgo:" 
     printf $dayAgo 
     printf " mkt: " 
@@ -77,38 +77,50 @@ do
       #printf " pic url: "
       #printf $picURL
       # exclude resolution and locale from the final local file name to use, since the same picture will show up for different locales and we don't want to end up with multiple files for the same image
-      picName=$(echo $picURI | cut -d "/" -f 2 | cut -d "_" -f 1 | cut -d "." -f 2).jpg
-      #printf "pic name: "
-      #printf $picName 
+      picNameWithoutExtWithoutDate=$(echo $picURI | cut -d "/" -f 2 | cut -d "_" -f 1 | cut -d "." -f 2)
+      printf "pic name without ext: $picNameWithoutExtWithoutDate, "
 
-      # $picName contains the filename of the Bing pic of the day
-      #picName=${picURL#*2f}
+      # add date to the picture file name
+      date0=$(date -v -$((dayAgo))d "+%Y-%m-%d")
+      printf "date0: $date0, "
+      picNameToUse=$picNameWithoutExtWithoutDate.$date0.jpg
+      printf "pic file name to use: "
+      printf $picNameToUse 
 
-      # filePath - check if the image to download already exists in the save folder or the archive folder
-      saveFilePath=$saveDir/$picName
-      printf " saveFile: "
-      printf $saveFilePath
-      archiveFilePath=$archiveDir/$picName
-      if [ -f $saveFilePath -o -f $archiveFilePath ]; then 
-        printf "$yellow" " file exists already !!"
+      # check if the image to download already exists in the save folder or the archive folder
+      #archiveFilePath=$archiveDir/$picNameToUse
+      if ls $saveDir | grep -q $picNameWithoutExtWithoutDate > /dev/null; then 
+        printf "$yellow" " [new] file exists already !!"
         continue
       fi
-      # Download the Bing pic of the day
-      #curl --create-dirs -o $saveFilePath $picURL
-      printf "$green" " >>>>> downloading ......"
+      if ls $archiveDir | grep -q $picNameWithoutExtWithoutDate > /dev/null; then 
+        printf "$yellow" " [new] file archived already !!"
+        continue
+      fi
+      #if [ -f $saveFilePath -o -f $archiveFilePath ]; then 
+        #printf "$yellow" " file exists already !!"
+        #continue
+      #fi
 
-      # date of the picture
-      date1=$(date -v -$((dayAgo))d "+DATE_%Y-%m-%d")
-      printf "$green" $date1
+      # download the picture file
+      printf " --- downloading ......"
+      saveFilePath=$saveDir/$picNameToUse
+      printf " now saveFilePath is: $saveFilePath, "
       curl -s -o $saveFilePath $picURL
-
-      printf "$green" " <<<<< done" 
+      printf " --- downloading done" 
 
       # Test if it's a pic
       file $saveFilePath | grep HTML && rm -rf $saveFilePath && continue
 
+      # watermark
+      printf "--- watermarking ......"
+      date1=$(date -v -$((dayAgo))d "+DATE_%Y-%m-%d")
+      #printf "$green date1: $date1, "
+      printf "./watermark.sh $saveFilePath $date1"
       ./watermark.sh $saveFilePath $date1
+      #printf "--- watermarking done" 
   done
+  printf "$green" " <<<<<<< "
 done
 
 # Exit the script
