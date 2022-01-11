@@ -15,13 +15,16 @@ picExt=".jpg"
 for saveFilePath in $saveDir/*$picExt; do
 
   picName=$(basename $saveFilePath $picExt)
-  
-  echo
-  printf " === " 
-  printf " saveFilePath:"
+  printf "\nsaveFilePath:"
   printf $saveFilePath
-  printf " picName:" 
-  printf $picName
+ 
+  # skip if the file has already been watermarked hence has the "watermarked" prefix in file name 
+  if ls $saveFilePath | grep -q "watermarked" > /dev/null; then
+    printf "$yellow" " skipped"
+    continue;
+  fi
+
+  printf "$green" " watermark: $picName"
 
   ./watermark.sh $saveFilePath force
 done

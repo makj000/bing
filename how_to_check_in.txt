@@ -1,0 +1,4 @@
+2FA is set for my github account
+remote origin should be set with "git remote set-url origin https://git@github.com/makj000/bing-homepage-gallery-downloader"
+generate a access token on the website under Settings / Develper settings, 
+use it instead of the password when running 'git push'
