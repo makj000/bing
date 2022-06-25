@@ -11,6 +11,9 @@ yellow='\e[1;33m%s\e[0m\n'
 # how many days to go back in history for downloading
 daysToGoBack=35
 
+# earliest date to go back to for downloading, don't download pics before this date
+earliestDate="2022-06-24"
+
 # $bing is needed to form the fully qualified URL for
 # the Bing pic of the day
 bing="www.bing.com"
@@ -30,8 +33,17 @@ picExt=".jpg"
 # Download the highest resolution
 #while true; do
 
+# echo $((($(date -d "2010-06-01" "+%s") - $(date -d "2010-05-15" "+%s")) / 86400))
+now=$(date +'%m/%d/%Y')
+now_sec=$(date -j -f "%m/%d/%Y" $now "+%s")
+earliest_date_sec=$(date -j -f "%Y-%m-%d" $earliestDate "+%s")
+((diff_sec=now_sec-earliest_date_sec))
+((diff_day=diff_sec/60/60/24))
+echo "diff in days: " + $diff_day
+
 # Download pictures. The dayAgo parameter determines where to start from. 0 is the current day, 1 the previous day, etc.
-for (( dayAgo = 0; dayAgo <= $daysToGoBack; dayAgo++ ));
+echo "daysToGoBack: $daysToGoBack"
+for (( dayAgo = 0; dayAgo <= $daysToGoBack && dayAgo <= diff_day; dayAgo++ ));
 do
 
   # The mkt parameter determines which Bing market you would like to
@@ -117,7 +129,7 @@ do
       date1=$(date -v -$((dayAgo))d "+DATE_%Y-%m-%d")
       #printf "$green date1: $date1, "
       printf "./watermark.sh $saveFilePath $date1"
-      ./watermark.sh $saveFilePath $date1
+      # sh ./watermark.sh $saveFilePath $date1
       #printf "--- watermarking done" 
   done
   printf "$green" " <<<<<<< "
