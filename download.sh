@@ -12,7 +12,7 @@ yellow='\e[1;33m%s\e[0m\n'
 daysToGoBack=35
 
 # earliest date to go back to for downloading, don't download pics before this date
-earliestDate="2022-06-24"
+earliestDate="2022-07-09"
 
 # $bing is needed to form the fully qualified URL for
 # the Bing pic of the day
